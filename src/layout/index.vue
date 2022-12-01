@@ -1,10 +1,6 @@
 <template>
   <div :class="classObj" class="app-wrapper">
-    <div
-      v-if="device === 'mobile' && sidebar.opened"
-      class="drawer-bg"
-      @click="handleClickOutside"
-    />
+    <div v-if="device === 'mobile' && sidebar.opened" class="drawer-bg" @click="handleClickOutside" />
     <!-- sidebar首页结构的左侧区域 -->
     <sidebar class="sidebar-container" />
     <!-- 首页结构的右侧 -->
@@ -13,7 +9,7 @@
         <!-- navbar右侧结构的顶部导航 -->
         <navbar />
       </div>
-      <!-- 右侧结构的下面的 -->
+      <!-- 右侧结构的下面的主要内容展示 -->
       <app-main />
     </div>
   </div>

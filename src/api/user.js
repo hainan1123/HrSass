@@ -1,24 +1,18 @@
 import request from '@/utils/request'
 
+/**
+ * 登录接口
+ *@param {object} data 登录需要的数据 data中应该包含mobile 和 password
+ *@returns promise
+ */
 export function login(data) {
   return request({
-    url: '/vue-admin-template/user/login',
-    method: 'post',
-    data
+    url: 'post',
+    method: '/sys/login',
+    data: data
   })
 }
 
-export function getInfo(token) {
-  return request({
-    url: '/vue-admin-template/user/info',
-    method: 'get',
-    params: { token }
-  })
-}
+export function getInfo(token) {}
 
-export function logout() {
-  return request({
-    url: '/vue-admin-template/user/logout',
-    method: 'post'
-  })
-}
+export function logout() {}
