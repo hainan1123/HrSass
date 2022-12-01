@@ -7,9 +7,9 @@ import request from '@/utils/request'
  */
 export function login(data) {
   return request({
-    url: 'post',
-    method: '/sys/login',
-    data: data
+    url: '/sys/login',
+    method: 'post',
+    data
   })
 }
 
