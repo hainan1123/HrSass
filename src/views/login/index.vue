@@ -128,22 +128,38 @@ export default {
         this.$refs.password.focus()
       })
     },
-    handleLogin() {
-      this.$refs.loginForm.validate((valid) => {
-        if (valid) {
-          this.loading = true
-          this.$store
-            .dispatch('user/login', this.loginForm)
-            .then(() => {
-              this.$router.push({ path: this.redirect || '/' })
-              this.loading = false
-            })
-            .catch(() => {
-              this.loading = false
-            })
+    async handleLogin() {
+      // 如果不传回调函数是promise 如果往下执行就代表验证成功，promise是异步的需要await
+      // await this.$refs.loginForm.validate()
+      // try {
+      //   this.loading = true
+      //   await this.$store.dispatch('user/login', this.loginForm)
+      //   this.$router.push('/')
+      // } catch (error) {
+      //   console.log(error)
+      // } finally {
+      //   this.loading = false
+      // }
+      // 给登录绑定的方法
+      // 验证整体表单
+      this.$refs.loginForm.validate(async (isOk) => {
+        if (isOk) {
+          try {
+            this.loading = true
+            // 只有校验通过了 我们才能去调用action 然后发起登录请求
+            await this.$store.dispatch('user/login', this.loginForm)
+            // 应该登录成功之后
+            // async标记的函数实际上一个promise对象
+            // await下面的代码 都是成功执行的代码
+            this.$router.push('/')
+          } catch (error) {
+            console.log(error)
+          } finally {
+            // 不管执行try 还是catch 都去关闭转圈
+            this.loading = false
+          }
         } else {
-          console.log('error submit!!')
-          return false
+          this.$message.error('输入错误，请检查输入内容')
         }
       })
     }
@@ -273,3 +289,8 @@ $light_gray: #eee;
   }
 }
 </style>
+(response) => { // axios默认有一层data 去掉 const { success, message, data } = response.data // 根据success的成功与否
+绝对下面的操作 if (success) { return data } else { // 业务错误了，应该进catch Message.error(message) return
+Promise.reject(new Error(message)) // 返回执行错误 让当前的执行链跳出成功 直接进入catch } }, (error) => {
+Message.error(error.message) // 提示错误信息 return Promise.reject(error) // 返回执行错误 让当前的执行链跳出成功
+直接进入catch }
