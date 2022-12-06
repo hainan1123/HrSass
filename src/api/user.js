@@ -13,7 +13,7 @@ export function login(data) {
   })
 }
 /**
- *获取用户基本信息接口
+ *获取用户基本资料接口
  *
  * **/
 export function getUserInfo() {
@@ -22,5 +22,14 @@ export function getUserInfo() {
     method: 'post'
   })
 }
-
+/**
+ *获取员工的基本信息(为了显示头像)
+ *method默认类型就是get(token已经注入)
+ * @export
+ */
+export function getUserDetailById(id) {
+  return request({
+    url: `/sys/user/${id}`
+  })
+}
 export function logout() {}

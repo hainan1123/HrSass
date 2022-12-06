@@ -1,5 +1,5 @@
-import { login, getUserInfo } from '@/api/user'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { login, getUserInfo, getUserDetailById } from '@/api/user'
+import { getToken, setToken, removeToken, setTimeStamp } from '@/utils/auth'
 // 状态
 // 用户的数据
 export default {
@@ -40,13 +40,24 @@ export default {
       // 能执行到这步，已经登录成功,成功之后把token传给mutation存起来再发个state
       // async 标记的是一个promise对象
       context.commit('SET_TOKEN', res) // 设置token
+      // 拿到token说明登陆成功存时间戳
+      setTimeStamp() // 设置当前的时间戳
     },
-    // 获取用户信息
+    // 获取用户基本资料
     async getUserInfo(context) {
       // 获取返回值
       const result = await getUserInfo()
-      context.commit('SET_USER_INFO', result) // 将整个的个人信息设置到用户的vueX数据中
+      // 获取员工的详情 用户的详情数据
+      const baseInfo = await getUserDetailById(result.userId) // 为了获取头像
+      const obj = { ...result, ...baseInfo } // 将两个接口结果合并
+      // 此时已经获取到了用户的基本资料 迫不得已 为了头像再次调用一个接口
+      context.commit('SET_USER_INFO', obj) // 将整个的个人信息设置到用户的vueX数据中
       return result
+    },
+    // 登出功能，删除token，清除cookie，清除用户信息
+    logout(context) {
+      context.commit('REMOVE_TOKEN')
+      context.commit('REMOVE_USER_INFO')
     }
   }
 }

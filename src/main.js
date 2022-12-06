@@ -14,12 +14,19 @@ import router from './router'
 
 import '@/icons' // icon
 import '@/permission' // permission control路由守卫
-
+// 批量注册自定义指令 以directives传入对象的方式
+import * as directives from '@/directives' // 引入所有的自定义指令
 // set ElementUI lang to EN
 Vue.use(ElementUI, { locale })
 // 如果想要中文版 element-ui，按如下方式声明
 // Vue.use(ElementUI)
-
+// 注册自定义指令
+// 遍历所有的导出的指令对象 完成自定义全局注册
+// console.log(Object.keys(directives)) 所有自定义指令的keys
+Object.keys(directives).forEach((key) => {
+  // 注册自定义指令
+  Vue.directive(key, directives[key])
+})
 Vue.config.productionTip = false
 
 new Vue({

@@ -17,8 +17,8 @@ export function parseTime(time, cFormat) {
   if (typeof time === 'object') {
     date = time
   } else {
-    if ((typeof time === 'string')) {
-      if ((/^[0-9]+$/.test(time))) {
+    if (typeof time === 'string') {
+      if (/^[0-9]+$/.test(time)) {
         // support "1548221490638"
         time = parseInt(time)
       } else {
@@ -28,7 +28,7 @@ export function parseTime(time, cFormat) {
       }
     }
 
-    if ((typeof time === 'number') && (time.toString().length === 10)) {
+    if (typeof time === 'number' && time.toString().length === 10) {
       time = time * 1000
     }
     date = new Date(time)
@@ -45,7 +45,9 @@ export function parseTime(time, cFormat) {
   const time_str = format.replace(/{([ymdhisa])+}/g, (result, key) => {
     const value = formatObj[key]
     // Note: getDay() returns 0 on Sunday
-    if (key === 'a') { return ['日', '一', '二', '三', '四', '五', '六'][value ] }
+    if (key === 'a') {
+      return ['日', '一', '二', '三', '四', '五', '六'][value]
+    }
     return value.toString().padStart(2, '0')
   })
   return time_str
@@ -80,17 +82,7 @@ export function formatTime(time, option) {
   if (option) {
     return parseTime(time, option)
   } else {
-    return (
-      d.getMonth() +
-      1 +
-      '月' +
-      d.getDate() +
-      '日' +
-      d.getHours() +
-      '时' +
-      d.getMinutes() +
-      '分'
-    )
+    return d.getMonth() + 1 + '月' + d.getDate() + '日' + d.getHours() + '时' + d.getMinutes() + '分'
   }
 }
 
@@ -105,7 +97,7 @@ export function param2Obj(url) {
   }
   const obj = {}
   const searchArr = search.split('&')
-  searchArr.forEach(v => {
+  searchArr.forEach((v) => {
     const index = v.indexOf('=')
     if (index !== -1) {
       const name = v.substring(0, index)
@@ -114,4 +106,40 @@ export function param2Obj(url) {
     }
   })
   return obj
+}
+/**
+ *想要能够写清楚递归，需要从最本质的需求入手 目的：数据A--->b [{id:1,pid:''},{id:2,pid:''},{id:3,pid:'1'}] =>[
+  {
+    children:
+    [
+      {}
+    ]
+  },{
+    children:
+    [
+      {}
+    ]
+  }]
+ *一级数据的id 是二级数据的pid
+ * 将列表型的数据转成树型结构 => 递归算法= > 自己调用自己 => 一点条件不能一样，否则一定会死循环
+ * 遍历树型 有一个重点 要先找一个头儿
+ * list 是我要处理的数据 rootValue是pid
+ * **/
+export function tranListToTreeData(list, rootValue) {
+  var arr = []
+  list.forEach((item) => {
+    // 如果pid = '' 说明当前item是一级数据
+    if (item.pid === rootValue) {
+      // 找到之后 就要去找 item 下面又没有子节点
+      // 去找当前一级数据的二级数据 二级数据的pid就是一级数据的id
+      // 如果子级的pid等于父级的id说明他是他的子级
+      const children = tranListToTreeData(list, item.id)
+      if (children.length) {
+        // 如果 children的长度不为大于0，说明找到了子集数据
+        item.children = children
+      }
+      arr.push(item)
+    }
+  })
+  return arr
 }

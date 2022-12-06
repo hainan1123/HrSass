@@ -10,9 +10,9 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <img src="@/assets/common/bigUserHeader.png" class="user-avatar" />
+          <img v-imageerror="defaultImg" :src="staffPhoto" class="user-avatar" />
           <span class="name">{{ $store.getters.name }}</span>
-          <!-- TODO -->
+
           <i class="el-icon-caret-bottom" style="color: #fff" />
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
@@ -42,16 +42,23 @@ export default {
     // Breadcrumb,
     Hamburger
   },
+  data() {
+    return {
+      // 在data中想要引入图片资源，必须需要引用require
+      defaultImg: require('@/assets/common/head.jpg')
+    }
+  },
   computed: {
-    ...mapGetters(['sidebar', 'avatar'])
+    ...mapGetters(['sidebar', 'staffPhoto'])
   },
   methods: {
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')
     },
+    // 退出（这里没有必要写async和await，logout里没有异步操作）
     async logout() {
       await this.$store.dispatch('user/logout')
-      this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+      this.$router.push('/login')
     }
   }
 }
