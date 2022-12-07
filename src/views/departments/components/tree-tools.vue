@@ -45,11 +45,12 @@ export default {
     // 操作节点调用的方法
     async operateDept(type) {
       if (type === 'add') {
-        // 添加子部门的操作  // 向父组件抛出添加的操作
-        // 为何传出treeNode 因为是添加子部门 需要当前部门的数据
+        // 添加子部门的操作 this.treeNode 就是添加当前部门的子部门
+        // 为何传出treeNode 因为是添加子部门 需要当前部门的数据需要知道从哪里添加
         this.$emit('addDept', this.treeNode)
       } else if (type === 'edit') {
-        //  编辑部门的操作
+        //  编辑部门的操作-触发自定义事件点击谁编辑谁
+        this.$emit('editDept', this.treeNode)
       } else {
         //  删除操作
         try {

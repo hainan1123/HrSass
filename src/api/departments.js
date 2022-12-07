@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 /** *
  *
- * 获取组织架构数据
+ * 获取组织架构数据（没写默认就是get）
  * **/
 export function getDepartments() {
   return request({
@@ -26,5 +26,13 @@ export function addDepartments(data) {
     url: '/company/department',
     method: 'post',
     data
+  })
+}
+/** *
+ * 获取部门详情
+ * ***/
+export function getDepartDetail(id) {
+  return request({
+    url: `/company/department/${id}`
   })
 }
