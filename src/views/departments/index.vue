@@ -1,26 +1,18 @@
 <template>
-  <div class="dashboard-container">
+  <div v-loading="loading" class="dashboard-container">
     <div class="app-container">
       <h2>组织架构</h2>
       <!-- 组织架构头部 -->
       <el-card class="tree-card">
         <!-- 放置结构内容 el-row是行 align='middle'纵向居中-->
-        <TreeTools
-          :tree-node="company"
-          :is-root="true"
-          @addDept="addDept"
-        ></TreeTools>
+        <TreeTools :tree-node="company" :is-root="true" @addDept="addDept"></TreeTools>
         <!-- 树型组件 -->
         <!--
           常用参数
           data 树型组件展示需要用到的数据
           props 设置的是树型组件展示数距到时候参考的对象字段
         -->
-        <el-tree
-          :data="departs"
-          :props="defaultProps"
-          :default-expand-all="true"
-        >
+        <el-tree :data="departs" :props="defaultProps" :default-expand-all="true">
           <!-- 传入内容 插槽内容  会循环多次，有多少节点 就循环多少次-->
           <!-- 作用域插槽 slot-scope="obj" 接收传递给插槽的数据   data 每个节点的数据对象-->
           <!-- 说明el-tree里面的这个内容 就是插槽内容 => 填坑内容  => 有多少个节点循环多少次 -->
@@ -62,12 +54,12 @@ export default {
   },
   data() {
     return {
-      company: {},
+      company: {}, // 头部结构的数据
       departs: [],
       showDialog: false, // 控制弹层的显示
       node: null, // 记录当前点击的节点
       defaultProps: {
-        label: 'name'
+        label: 'name' // 表示 从这个属性显示内容(ele)
       }
     }
   },
@@ -76,8 +68,9 @@ export default {
     this.getDepartments()
   },
   methods: {
-    // 请求组织架构数据
     async getDepartments() {
+      this.loading = true
+      // 请求组织架构数据
       const result = await getDepartments()
       // console.log(result)
       this.company = {
@@ -85,6 +78,8 @@ export default {
         manager: result.companyManage,
         id: ''
       }
+      this.loading = false
+      // 调用方法转化成树型结构
       this.departs = tranListToTreeData(result.depts, '')
     },
     async del(id) {

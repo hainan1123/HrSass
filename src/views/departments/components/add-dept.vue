@@ -6,25 +6,12 @@
           1，el-form配置：model和：rules属性
           2，el-form-item配置prop属性
           3，表单input进行v-model 双向数据绑定-->
-    <el-form
-      ref="deptForm"
-      :model="FormData"
-      :rules="rules"
-      label-width="120px"
-    >
+    <el-form ref="deptForm" :model="FormData" :rules="rules" label-width="120px">
       <el-form-item prop="name" label="部门名称">
-        <el-input
-          v-model="FormData.name"
-          style="width: 80%"
-          placeholder="1-50个字符"
-        ></el-input>
+        <el-input v-model="FormData.name" style="width: 80%" placeholder="1-50个字符"></el-input>
       </el-form-item>
       <el-form-item prop="code" label="部门编码">
-        <el-input
-          v-model="FormData.code"
-          style="width: 80%"
-          placeholder="1-50个字符"
-        ></el-input>
+        <el-input v-model="FormData.code" style="width: 80%" placeholder="1-50个字符"></el-input>
       </el-form-item>
       <el-form-item prop="manager" label="部门负责人">
         <el-select
@@ -66,7 +53,8 @@
 import {
   getDepartments,
   addDepartments,
-  getDepartDetail
+  getDepartDetail,
+  updateDepartments
 } from '@/api/departments'
 import { getEmployeeSimple } from '@/api/employees'
 
@@ -93,27 +81,42 @@ export default {
       // 先要获取最新的组织架构数据
       const { depts } = await getDepartments()
       // depts是所有的部门数据
-      // 如何去找技术部所有的子节点
+      // 如何去找技术部所有的子节点'
+      let isRepeat = false
+      if (this.FormData.id) {
+        // 有id是编辑
+        // 编辑 张三 => 校验规则 除了我之外 同级部门下 不能有叫张三的
+        isRepeat = depts
+          .filter((item) => item.id !== this.FormData.id && item.pid === this.treeNode.pid)
+          .some((item) => item.name === value)
+      } else {
+        isRepeat = depts
+          .filter((item) => item.pid === this.treeNode.id)
+          .some((item) => item.name === value)
+      }
 
-      const isRepeat = depts
-        .filter((item) => item.pid === this.treeNode.id)
-        .some((item) => item.name === value)
-      console.log(isRepeat)
-      isRepeat
-        ? callback(new Error(`同级部门下已经有${value}的部门了`))
-        : callback()
+      isRepeat ? callback(new Error(`同级部门下已经有${value}的部门了`)) : callback()
     }
     // 检查编码是否相同
     // 历史数据可能没有code 所以这里加一个强制性的条件 value 不能为空
     const checkCodeRepeat = async (rule, value, callback) => {
       const { depts } = await getDepartments()
-      const isRepeat = depts.some((item) => {
-        item.code === value && value
-      })
-      console.log(isRepeat)
-      isRepeat
-        ? callback(new Error(`组织架构中已经有部门使用${value}编码`))
-        : callback()
+      let isRepeat = false
+      if (this.FormData.id) {
+        // 有id是编辑
+        // 编辑模式  因为编辑模式下 不能算自己
+
+        isRepeat = depts.some(
+          (item) => item.id !== this.FormData.id && item.code === value && value
+        )
+      } else {
+        // 没有id是新增
+        isRepeat = depts.some((item) => {
+          item.code === value && value
+        })
+      }
+
+      isRepeat ? callback(new Error(`组织架构中已经有部门使用${value}编码`)) : callback()
     }
     return {
       FormData: {
@@ -146,9 +149,7 @@ export default {
           },
           { validator: checkCodeRepeat, trigger: 'blur' }
         ],
-        manager: [
-          { required: true, message: '部门负责人不能为空', trigger: 'blur' }
-        ],
+        manager: [{ required: true, message: '部门负责人不能为空', trigger: 'blur' }],
         introduce: [
           { required: true, message: '部门介绍不能为空', trigger: 'blur' },
           {
@@ -192,19 +193,26 @@ export default {
 
       this.$refs.deptForm.validate(async (isOk) => {
         if (isOk) {
-          // 校验完成调用接口把新增的数据传给后端
-          await addDepartments({ ...this.FormData, pid: this.treeNode.id })
+          // 校验完成对操作进行判断处理
+          // FormDate中有没有id
+          if (this.FormData.id) {
+            // 有id是编辑
+            await updateDepartments(this.FormData)
+          } else {
+            // 没有id是新增
+            await addDepartments({ ...this.FormData, pid: this.treeNode.id })
+          }
+          console.log(this.FormData)
           // 告诉父组件添加
           this.$emit('addDept')
           // 点击确定修改showDialog的值控制关闭
           this.$emit('update:showDialog', false)
-          this.$message.success('添加成功')
         }
       })
     },
     // 点击编辑调部门编辑接口
     async getDepartDetail(id) {
-      // 会写
+      // 回写
       this.FormData = await getDepartDetail(id)
     }
   }

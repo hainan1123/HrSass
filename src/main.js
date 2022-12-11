@@ -11,6 +11,14 @@ import '@/styles/index.scss' // global 全局css
 import App from './App'
 import store from './store'
 import router from './router'
+// 整体注册通用性组件
+import Component from '@/components'
+Vue.use(Component) // 注册自己的插件
+// 过滤器(遍历所有的导出的指令对象)
+import * as filters from '@/filters'
+Object.keys(filters).forEach((key) => {
+  Vue.filter(key, filters[key])
+})
 
 import '@/icons' // icon
 import '@/permission' // permission control路由守卫
