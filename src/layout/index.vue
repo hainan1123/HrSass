@@ -1,6 +1,10 @@
 <template>
   <div :class="classObj" class="app-wrapper">
-    <div v-if="device === 'mobile' && sidebar.opened" class="drawer-bg" @click="handleClickOutside" />
+    <div
+      v-if="device === 'mobile' && sidebar.opened"
+      class="drawer-bg"
+      @click="handleClickOutside"
+    />
     <!-- sidebar首页结构的左侧区域 -->
     <sidebar class="sidebar-container" />
     <!-- 首页结构的右侧 -->
@@ -8,6 +12,8 @@
       <div :class="{ 'fixed-header': fixedHeader }">
         <!-- navbar右侧结构的顶部导航 -->
         <navbar />
+        <!-- 放置tabsView -->
+        <tags-view />
       </div>
       <!-- 右侧结构的下面的主要内容展示 -->
       <app-main />

@@ -153,7 +153,7 @@ export default {
         await this.$refs.formData.validate()
         // 2.如果格式校验通过，就直接调用方法
         await addEmployee(this.formData)
-        // 3.重新获取数据 --子组件调用父组件实例的方法
+        // 3.重新获取数据 --子组件调用父组件实例的方法(相对的)
         this.$parent.getEmployeeList()
         // 4.提示成功
         this.$message.success('添加成功')

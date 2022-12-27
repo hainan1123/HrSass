@@ -6,6 +6,7 @@ const getters = {
   name: (state) => state.user.userinfo.username,
   userId: (state) => state.user.userinfo.userId,
   staffPhoto: (state) => state.user.userinfo.staffPhoto, // 建立头像的快捷访问
-  companyId: (state) => state.user.userinfo.companyId // 建立公司id的快捷访问
+  companyId: (state) => state.user.userinfo.companyId, // 建立公司id的快捷访问
+  routes: (state) => state.permission.routes // 导出当前的路由
 }
 export default getters

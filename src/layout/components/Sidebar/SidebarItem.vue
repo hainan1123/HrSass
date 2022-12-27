@@ -8,8 +8,16 @@
       "
     >
       <app-link v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path)">
-        <el-menu-item :index="resolvePath(onlyOneChild.path)" :class="{ 'submenu-title-noDropdown': !isNest }">
-          <item :icon="onlyOneChild.meta.icon || (item.meta && item.meta.icon)" :title="onlyOneChild.meta.title" />
+        <el-menu-item
+          :index="resolvePath(onlyOneChild.path)"
+          :class="{ 'submenu-title-noDropdown': !isNest }"
+        >
+          <!-- 每一个组件都会有一个$t方法，他会根据传入的key,自动的去寻找当前的语言的文本，我们可以将左侧菜单栏变成多语言展示文本 -->
+          <!-- $t()方法可以传入带点的字符串 表示查询嵌套结构的值 -->
+          <item
+            :icon="onlyOneChild.meta.icon || (item.meta && item.meta.icon)"
+            :title="$t('route.' + onlyOneChild.name)"
+          />
         </el-menu-item>
       </app-link>
     </template>
