@@ -1,5 +1,0 @@
-SecretId:AKIDCC5sY6Sdnt0ynUzWt60mS2VtIXn6FGTa
-SecretKey:3va6yqw15zjFZuyokaMySqlcN1e5IKEo
-APPID 1315925688
-name: bjhr-1315925688
-所属地域：ap-beijing
